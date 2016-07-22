@@ -13,24 +13,91 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $('#calc').click(function() {
-                alert('hoge');
+                var pile = $('#pile input[type=radio]:checked').val()
+                var hand = $('#hand input[type=radio]:checked').val()
+                var piles = parseFloat(pile);
+                var hands = parseFloat(hand);
+
+                var generateRow = function(target, piles, hands){
+                    var r = $('<tr></tr>');
+                    r.append('<td>' + target + '枚</td>');
+                    
+                    var remain = piles;
+                    
+                    var prob = (remain - target)/remain;
+                    remain--;
+                    
+                    for(var i = 0 ; i < hands - 1; i++){
+                        prob = prob * (remain - target)/remain;
+                        remain--;
+                    }
+
+                    for(var i = 0 ; i < 1 + hands; i++){
+                        prob = prob * (remain - target)/remain;
+                        remain--;
+                        r.append('<td>' + (100.0 - prob * 100).toFixed(3) + '%</td>');
+                    }
+                    
+                    return r;
+                };
+                
+                $('#result tr').remove();
+                for(var i=0; i<piles; i++){
+                    $('#result').append(generateRow(i+1, piles, hands));
+                }
             });
+            
         });
     </script>
 </head>
 
 <body>
-    <h1>Al Azif</h1>
-    <a id="calc" href="#" class="btn btn-default">GO</a>
+    <div class="page-header">
+        <h1>Al Azif</h1>
+    </div>
+    <div class="page-header">
+        <h1>dodontoF</h1>
+    </div>
+    <a href="index.html" class="btn">GO</a>
+    <div class="page-header">
+        <h1>Calculator</h1>
+    </div>
+
+    山札の枚数:
+    <div class="btn-group" data-toggle="buttons" id="pile">
+      <label class="btn btn-primary">
+        <input type="radio" name="pileOptions" id="pile1" value=30 autocomplete="off">30枚
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="pileOptions" id="pile2" value=40 autocomplete="off">40枚
+      </label>
+    </div>
+    <hr>
+    初期手札の枚数:
+    <div class="btn-group" data-toggle="buttons" id="hand">
+      <label class="btn btn-primary">
+        <input type="radio" name="handOptions" id="hand1" value=3 autocomplete="off">3枚
+      </label>
+      <label class="btn btn-primary">
+        <input type="radio" name="handOptions" id="hand2" value=4 autocomplete="off">4枚
+      </label>
+    </div>
+    <hr>
+    <a id="calc" class="btn btn-default">GO</a>
+    <h3>1ターン目で引きたいカードが引ける確率(ドロー込み)</h3>
     <table class="table">
-        <tr>
-            <td>elem1</td>
-            <td>elem2</td>
-        </tr>
-        <tr>
-            <td>elem3</td>
-            <td>elem4</td>
-        </tr>
+        <thead>
+            <tr>
+                <th>引きたいカードの枚数</th>
+                <th>0枚交換</th>
+                <th>1枚交換</th>
+                <th>2枚交換</th>
+                <th>3枚交換</th>
+                <th>4枚交換</th>
+            </tr>
+        </thead>
+        <tbody id="result" >
+        </tbody>
     </table>
 </body>
 </html>
